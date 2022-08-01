@@ -15,9 +15,11 @@ logger = logging.getLogger(__name__)
 
 
 def index(request):
-    posts = Post.objects.filter(published_at__lte=timezone.now())
-    logger.debug("Got %d posts", len(posts)) # posts quantity log
-    return render(request, "blog/index.html", {"posts": posts})
+  #from django.http import HttpResponse
+  #return HttpResponse(str(request.user).encode("ascii"))
+  posts = Post.objects.filter(published_at__lte=timezone.now())
+  logger.debug("Got %d posts", len(posts)) # posts quantity log
+  return render(request, "blog/index.html", {"posts": posts})
 
 
 def post_detail(request, slug):
