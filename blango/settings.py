@@ -57,6 +57,7 @@ class Dev(Configuration):
         "debug_toolbar",
         # In House
         'blog',
+        'blango_auth',
     ]
 
     MIDDLEWARE = [
@@ -203,7 +204,11 @@ class Dev(Configuration):
         'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
     ]
 
+    # DjDT
     INTERNAL_IPS = ["192.168.10.226"]
+
+    # Custom User model
+    AUTH_USER_MODEL = "blango_auth.User"
 
 class Prod(Dev):
   DEBUG = False
