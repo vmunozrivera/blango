@@ -10,6 +10,7 @@ from blango_auth.forms import BlangoRegistrationForm
 
 urlpatterns = [
     path('', include("django.contrib.auth.urls")),
+    path('', include("allauth.urls")),
     path('register/', include("django_registration.backends.activation.urls")),
     path('profile/', views.profile, name="profile"),
     path(
