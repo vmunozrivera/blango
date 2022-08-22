@@ -61,6 +61,7 @@ class Dev(Configuration):
         'allauth.socialaccount',
         'allauth.socialaccount.providers.google',
         'rest_framework',
+        'rest_framework.authtoken',
         # In House
         'blog',
         'blango_auth',
@@ -226,6 +227,16 @@ class Dev(Configuration):
     ACCOUNT_EMAIL_REQUIRED = True
     ACCOUNT_USERNAME_REQUIRED = False
     ACCOUNT_AUTHENTICATION_METHOD = "email"
+
+    # DRF Authentication
+    REST_FRAMEWORK = {
+        "DEFAULT_AUTHENTICATION_CLASSES": [
+            "rest_framework.authentication.BasicAuthentication",
+            "rest_framework.authentication.SessionAuthentication",
+            "rest_framework.authentication.TokenAuthentication",
+        ]
+    }
+
 
 class Prod(Dev):
   DEBUG = False
