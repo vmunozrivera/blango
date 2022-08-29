@@ -3,7 +3,7 @@
 from rest_framework import generics
 
 # Serializers
-from blog.api.serializers import PostSerializer, UserSerializer
+from blog.api.serializers import PostSerializer, UserSerializer, PostDetailSerializer
 
 # Models
 from blog.models import Post
@@ -22,7 +22,7 @@ class PostList(generics.ListCreateAPIView):
 class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [AuthorModifyOrReadOnly | IsAdminUserForObject]
     queryset = Post.objects.all()
-    serializer_class = PostSerializer
+    serializer_class = PostDetailSerializer
 
 
 class UserDetail(generics.RetrieveAPIView):
