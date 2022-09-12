@@ -29,6 +29,13 @@ from blango_auth.models import User
 from blog.api.permissions import AuthorModifyOrReadOnly
 from blog.api.permissions import AuthorModifyOrReadOnly, IsAdminUserForObject
 
+# Filtering
+# User-Base
+from django.db.models import Q
+from django.utils import timezone
+# URL-Based
+from datetime import timedelta
+from django.http import Http404
 
 # class PostList(generics.ListCreateAPIView):
 #     queryset = Post.objects.all()
@@ -96,5 +103,56 @@ class PostViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @method_decorator(cache_page(120))
+    @method_decorator(vary_on_headers("Authorization", "Cookie"))
     def list(self, *args, **kwargs):
         return super(PostViewSet, self).list(*args, **kwargs)
+    
+    # Filtering
+    # def get_queryset(self):
+    #     if self.request.user.is_anonymous:
+    #         # published only
+    #         return self.queryset.filter(published_at__lte=timezone.now())
+
+    #     if self.request.user.is_staff:
+    #         # allow all
+    #         return self.queryset
+
+    #     # filter for own or
+    #     return self.queryset.filter(
+    #         Q(published_at__lte=timezone.now()) | Q(author=self.request.user)
+    #     )
+    def get_queryset(self):
+      if self.request.user.is_anonymous:
+        # published only
+        queryset = self.queryset.filter(published_at__lte=timezone.now())
+
+      elif not self.request.is_staff:
+        queryset = self.queryset
+      else:
+        queryset = self.queryset.filter(
+          Q(published_at__lte=timezone.now() | Q(author=self.request.user))
+        )
+
+      time_period_name = self.kwargs.get("period_name")
+
+      if not time_period_name:
+        # no further filtering requeired
+        return queryset
+      
+      if time_period_name == "new":
+        return queryset.filter(
+          published_at__gte=timezone.now()- timedelta(hours=1)
+        )
+      elif time_period_name == "today":
+        return queryset.filter(
+          published_at__date=timezone.now().date()
+        )
+      elif time_period_name == "week": 
+         return queryset.filter(
+           published_at__gte=timezone.now() - timedelta(days=7)
+         )
+      else:
+          raise Http404(
+              f"Time period {time_period_name} is not valid, should be "
+              f"'new', 'today' or 'week'"
+          )
