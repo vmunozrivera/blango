@@ -17,6 +17,7 @@ urlpatterns = [
     path('accounts/', include('blango_auth.urls')),
     path('ip/', blog.views.get_ip),
     path("api/v1/", include("blog.api.urls")),
+    path("post-table/", blog.views.post_table, name="blog-post-table"),
 ]
 
 if settings.DEBUG:
